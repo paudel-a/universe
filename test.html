@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket Test</title>
+  </head>
+  <body>
+    <h2>Socket Test</h2>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <script>
+      const socket = io("http://localhost:5000");
+
+      socket.on("connect", () => {
+        console.log("Connected:", socket.id);
+
+        socket.emit("joinRoom", "test_room");
+
+        socket.emit("sendMessage", {
+          roomId: "test_room",
+          senderId: "user1",
+          receiverId: "user2",
+          text: "Hello from test",
+        });
+      });
+
+      socket.on("receiveMessage", (msg) => {
+        console.log("Message received:", msg);
+      });
+    </script>
+  </body>
+</html>
