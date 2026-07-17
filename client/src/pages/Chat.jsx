@@ -92,6 +92,15 @@ function Chat() {
     }
   };
 
+  // ================= FORMAT TIME =================
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "";
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div className={darkMode ? "dark" : ""}>
       <div className="flex h-[85vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border dark:border-gray-700">
@@ -166,7 +175,16 @@ function Chat() {
                         : "bg-white dark:bg-gray-700 dark:text-white text-black rounded-bl-sm"
                     }`}
                   >
-                    {m.text}
+                    <div>{m.text}</div>
+                    <div
+                      className={`text-[10px] mt-1 text-right ${
+                        isSender
+                          ? "text-blue-100"
+                          : "text-gray-400 dark:text-gray-300"
+                      }`}
+                    >
+                      {formatTime(m.createdAt)}
+                    </div>
                   </div>
                 </div>
               );

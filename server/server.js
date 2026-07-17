@@ -93,35 +93,25 @@ io.on("connection", (socket) => {
 
     console.log("User joined room:", userId);
   });
+
   // ----------------------
-  // SEND MESSAGE
-  socket.on("sendMessage", async (data) => {
-    console.log("MESSAGE RECEIVED:", data);
-
+  // BROADCAST MESSAGE
+  // NOTE: the message is already saved to the DB by the
+  // POST /api/messages REST route before the client emits this
+  // event — this handler only relays it in real time, it does
+  // NOT persist it again (that previously caused duplicate saves).
+  // ----------------------
+  socket.on("sendMessage", (message) => {
     try {
-      const { sender, receiver, text } = data;
+      const { sender, receiver } = message;
 
-      const newMessage = await Message.create({
-        sender,
-        receiver,
-        text,
-      });
-
-      io.to(receiver).emit("receiveMessage", {
-        sender: sender,
-        receiver: receiver,
-        text: text,
-      });
-
-      io.to(sender).emit("receiveMessage", {
-        sender: sender,
-        receiver: receiver,
-        text: text,
-      });
+      io.to(receiver).emit("receiveMessage", message);
+      io.to(sender).emit("receiveMessage", message);
     } catch (err) {
-      console.error("Message error:", err.message);
+      console.error("Message broadcast error:", err.message);
     }
   });
+
   // ----------------------
   // SEND NOTIFICATION
   // ----------------------
